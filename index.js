@@ -92,8 +92,20 @@ root.printReport()
 root.onClick(45, 25)
 
 
-// tests
+// Tests //
 
+// onClick 
+assert(root.onClick(1024, 768, true).includes("root"));
+assert(!root.onClick(1025, 768, true).includes("root"));
+assert(!root.onClick(1025, 769, true).includes("root"));
+
+// getGlobalPosition
+
+assert(root.getGlobalPosition().x === 0);
+assert(button3.getGlobalPosition().x === 50);
+assert(button5.getGlobalPosition().x === 40);
+
+// confirms the prompted question logs the correct data
 const clickedWindowsAt4525 = root.onClick(45, 25, true)
 assert(clickedWindowsAt4525.includes("root"));
 assert(clickedWindowsAt4525.includes("child1"));
@@ -103,9 +115,4 @@ assert(clickedWindowsAt4525.includes("child6"));
 assert(clickedWindowsAt4525.includes("button5"));
 
 
-
-// passing
-assert(root.onClick(1024, 768, true).includes("root"));
-assert(!root.onClick(1025, 768, true).includes("root"));
-assert(!root.onClick(1025, 769, true).includes("root"));
 
