@@ -37,22 +37,21 @@ class Window {
 		return {x: this.x, y: this.y}
 	}
 
-	onClick(clickedX = 0, clickedY = 0, hideLog = false) {
+	onClick(clickedX = 0, clickedY = 0, hideLog = false, clickedWindows = []) {
+		// main purpose is to log, but also returns clickedWindows to test and debug
 		const {w, h} = this;
 		const {x, y} = this.getGlobalPosition();
-		console.log(x, y)
 		const withinXBounds = (x <= clickedX && clickedX <= (x + w));
 		const withinYBounds = (y <= clickedY && clickedY <= (y + h));
 		let windowHasBeenClicked = withinXBounds && withinYBounds;
-
 		if (windowHasBeenClicked) {
 			!hideLog && this.logClicked(this);
+			clickedWindows.push(this.id);
 			for (const childWindow of this.children.values()) {
-				childWindow.onClick(clickedX, clickedY, hideLog)
+				childWindow.onClick(clickedX, clickedY, hideLog, clickedWindows)
 			}
-
 		}
-		return windowHasBeenClicked;
+		return clickedWindows;
 	}
 
 	logClicked(win) {
@@ -89,16 +88,24 @@ const button6 = child5.addChild(new Window("button6", 10, 0, 10, 10));
 const button7 = child5.addChild(new Window("button7", 20, 0, 10, 10));
 const button8 = child5.addChild(new Window("button7", 30, 0, 10, 10));
 
-
 root.printReport()
 root.onClick(45, 25)
 
+
 // tests
 
-// passing
-assert(root.onClick(1024, 768, true));
-assert(!root.onClick(1025, 768, true));
-assert(!root.onClick(1025, 769, true));
+const clickedWindowsAt4525 = root.onClick(45, 25, true)
+assert(clickedWindowsAt4525.includes("root"));
+assert(clickedWindowsAt4525.includes("child1"));
+assert(clickedWindowsAt4525.includes("child2"));
+assert(clickedWindowsAt4525.includes("child5"));
+assert(clickedWindowsAt4525.includes("child6"));
+assert(clickedWindowsAt4525.includes("button5"));
 
-// failing
-assert(child5.onClick(5, 5))
+
+
+// passing
+assert(root.onClick(1024, 768, true).includes("root"));
+assert(!root.onClick(1025, 768, true).includes("root"));
+assert(!root.onClick(1025, 769, true).includes("root"));
+
